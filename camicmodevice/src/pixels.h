@@ -1,0 +1,2 @@
+void setupPixels();
+void loopPixels();
