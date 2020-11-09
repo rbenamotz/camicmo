@@ -2,24 +2,12 @@
 #include <util/delay.h>
 #include "hardware.h"
 #include <avr/interrupt.h>
-#include "light_ws2812.h"
 #include "common.h"
 
-#define NUMPIXELS 2
 struct cRGB led[NUMPIXELS];
-char led1Status = STATUS_OFF;
-char led2Status = STATUS_OFF;
 
-void applyLedColor(uint8_t i, char status)
-{
-    led[i].r = (status == STATUS_RED || status == STATUS_WHITE) ? 255 : 0;
-    led[i].g = (status == STATUS_GREEN || status == STATUS_WHITE) ? 255 : 0;
-    led[i].b = (status == STATUS_BLUE || status == STATUS_WHITE) ? 255 : 0;
-}
 void apply()
 {
-    applyLedColor(0, led1Status);
-    applyLedColor(1, led2Status);
     ws2812_setleds(led, NUMPIXELS);
 }
 
