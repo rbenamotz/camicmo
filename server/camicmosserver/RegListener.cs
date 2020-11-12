@@ -12,13 +12,8 @@ namespace camicmosserver
 {
     class RegListener
     {
-        private ManagementEventWatcher _watcher;
-        private long _lastNotification;
-
         public RegListener()
         {
-            //CheckAccessFor("microphone");
-
         }
 
         private bool CheckNonPackaged(RegistryKey key)

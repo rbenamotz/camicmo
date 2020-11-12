@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace camicmosserver
 {
-    class State
+    public class State
     {
         private bool _isMicOn;
         private bool _isCamOn;
@@ -15,7 +15,7 @@ namespace camicmosserver
         {
             _isCamOn = isCamOn;
             _isMicOn = isMicOn;
-            IsDirty = false;
+            IsDirty = true;
         }
         public bool IsDirty { get; set; }
         public bool IsCamOn {

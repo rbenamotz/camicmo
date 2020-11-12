@@ -1,0 +1,23 @@
+﻿[
+  {
+    "type": "serial",
+    "config": {
+      "micOnColor": [ 0, 0, 255 ],
+      "micOffColor": [ 10, 10, 10 ],
+      "camOnColor": [ 0, 0, 255 ],
+      "camOffColor": [ 10, 10, 10 ]
+    }
+  },
+  {
+    "type": "MqttBroker",
+    "config": {
+      "broker": "",
+      "port": 1883,
+      "clientId": "camicmo",
+      "credentials": {
+        "username": "",
+        "password": ""
+      }
+    }
+  }
+]
