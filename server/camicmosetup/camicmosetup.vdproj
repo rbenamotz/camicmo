@@ -33,6 +33,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0B7AEB343F9142C79DF88817D37E4BFF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_119007B5128FF81FCEA653499DFB3911"
         "OwnerKey" = "8:_C47E783A64BE4F848017C4B677DF606B"
         "MsmSig" = "8:_UNDEFINED"
@@ -459,12 +465,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_941FD2DC47787B671384BB12015DADFF"
-        "OwnerKey" = "8:_C47E783A64BE4F848017C4B677DF606B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_98328BF7BD4BC3C392453A8F0F72F3C4"
         "OwnerKey" = "8:_C47E783A64BE4F848017C4B677DF606B"
         "MsmSig" = "8:_UNDEFINED"
@@ -719,12 +719,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C47E783A64BE4F848017C4B677DF606B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_941FD2DC47787B671384BB12015DADFF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1456,6 +1450,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -1591,6 +1593,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0B7AEB343F9142C79DF88817D37E4BFF"
+            {
+            "SourcePath" = "8:..\\camicmosserver\\listeners.json"
+            "TargetName" = "8:listeners.json"
+            "Tag" = "8:"
+            "Folder" = "8:_A65812AB13E04727A68004E836D8A986"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_119007B5128FF81FCEA653499DFB3911"
@@ -3732,37 +3754,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_941FD2DC47787B671384BB12015DADFF"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_941FD2DC47787B671384BB12015DADFF"
-                    {
-                    "Name" = "8:YamlDotNet.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:YamlDotNet.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_A65812AB13E04727A68004E836D8A986"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_98328BF7BD4BC3C392453A8F0F72F3C4"
             {
             "AssemblyRegister" = "3:1"
@@ -5071,7 +5062,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:camicmo"
         "ProductCode" = "8:{A4941361-D2A6-43F8-A197-CA70ED861993}"
-        "PackageCode" = "8:{BC62106B-4C2F-4E2C-A330-AF14704A14AB}"
+        "PackageCode" = "8:{EB84D0E4-50B1-431B-9FFA-2353AFD03972}"
         "UpgradeCode" = "8:{5A9137F9-C445-4D08-B3A2-C1CF613003D6}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -5606,7 +5597,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C47E783A64BE4F848017C4B677DF606B"
             {
-            "SourcePath" = "8:..\\camicmosserver\\obj\\Debug\\camicmosserver.exe"
+            "SourcePath" = "8:..\\camicmosserver\\obj\\Release\\camicmosserver.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A65812AB13E04727A68004E836D8A986"
@@ -5626,34 +5617,6 @@
             "ProjectOutputGroupRegister" = "3:1"
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{32C0C446-F046-4980-8BEF-B3E90DE071A4}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_DD4121407F6C45989B83E80FEA1F4140"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_A65812AB13E04727A68004E836D8A986"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:ContentFiles"
             "OutputProjectGuid" = "8:{32C0C446-F046-4980-8BEF-B3E90DE071A4}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"

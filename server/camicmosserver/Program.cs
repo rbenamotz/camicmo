@@ -15,6 +15,7 @@ namespace camicmosserver
         private readonly IEnumerable<IListener> _listeners;
         private readonly State _state;
         private readonly RegListener _regListener;
+        private readonly string[] _capabilities = { State.WEBCAM, State.MIC };
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -36,15 +37,17 @@ namespace camicmosserver
         {
             var l = new ListenersFactory();
             _listeners = l.Listeners;
-            _state = new State(false,false);
+            _state = new State();
             _regListener = new RegListener();
         }
         private void Run()
         {
             while (true)
             {
-                _state.IsCamOn = _regListener.CheckAccessFor("webcam");
-                _state.IsMicOn = _regListener.CheckAccessFor("microphone");
+                foreach (string c in _capabilities)
+                {
+                    _state.RegisterProgramsFor(c, _regListener.WhatIsUsing(c));
+                }
                 if (!_state.IsDirty)
                 {
                     Thread.Sleep(500);

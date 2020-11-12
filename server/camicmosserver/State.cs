@@ -1,38 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace camicmosserver
 {
     public class State
     {
-        private bool _isMicOn;
-        private bool _isCamOn;
+        private Dictionary<string, ICollection<String>> _register;
+        public const string WEBCAM = "webcam";
+        public const string MIC = "microphone";
+        public static State Empty = new State();
 
-        public State(bool isCamOn, bool isMicOn)
+        public State()
         {
-            _isCamOn = isCamOn;
-            _isMicOn = isMicOn;
+            _register = new Dictionary<string, ICollection<string>>();
             IsDirty = true;
         }
         public bool IsDirty { get; set; }
-        public bool IsCamOn {
-            get { return _isCamOn; }
-            set {
-                IsDirty = (IsDirty || value != _isCamOn) ;
-                _isCamOn = value;
-            }
-        }
-        public bool IsMicOn
+        public bool IsSomethingOn { get { return (_register.Count > 0); } }
+
+        public bool IsCapbilityOn(string capability)
         {
-            get { return _isMicOn; }
-            set
+            return _register.ContainsKey(capability);
+        }
+
+        internal void RegisterProgramsFor(string capability, ICollection<string> progs)
+        {
+            bool b = IsCapbilityOn(capability);
+            if (progs == null || progs.Count() == 0)
             {
-                IsDirty = (IsDirty ||  value != _isMicOn);
-                _isMicOn = value;
+                _register.Remove(capability);
             }
+            else
+            {
+                _register[capability] = progs;
+            }
+
+            IsDirty = IsDirty || (IsCapbilityOn(capability) != b);
+        }
+
+        internal IEnumerable<object> ProgsForCapability(string capability)
+        {
+            if (!_register.ContainsKey(capability))
+            {
+                return new String[] { };
+            }
+            return _register[capability];
         }
     }
 }

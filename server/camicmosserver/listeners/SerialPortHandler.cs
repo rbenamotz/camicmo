@@ -83,6 +83,17 @@ namespace camicmosserver.listeners
             }
             lock (_pendingState)
             {
+                if (_pendingState.IsSomethingOn)
+                {
+                    for (int i=0; i<3; i++)
+                    {
+                        Thread.Sleep(250);
+                        SendToDevice(State.Empty);
+                        Thread.Sleep(250);
+                        SendToDevice(_pendingState);
+                    }
+
+                }
                 SendToDevice(_pendingState);
                 _pendingState = null;
             }
@@ -141,8 +152,8 @@ namespace camicmosserver.listeners
 
             byte[] buffer = new byte[] { CMD_TYPE_SET_LED_COLORS };
             port.Write(buffer, 0, 1);
-            port.Write(state.IsCamOn ? _camOnColor : _camOffColor, 0, 3);
-            port.Write(state.IsMicOn ? _micOnColor : _micOffColor, 0, 3);
+            port.Write(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, 3);
+            port.Write(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, 3);
             port.Read(buffer, 0, 1);
             Console.Write("-->");
             Console.WriteLine(buffer[0]);
