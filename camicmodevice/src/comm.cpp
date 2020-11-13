@@ -1,12 +1,12 @@
 #include "pa/picoUART.h"
 #include "pa/pu_print.h"
 #include "common.h"
-#define CMD_TYPE_HANDSHAKE 0xC8
-#define CMD_TYPE_SET_LED_COLORS 0xC9
+#define CMD_TYPE_HANDSHAKE 200
+#define CMD_TYPE_SET_LED_COLORS 201
 #define RESULT_OK 0x64
 #define RESULT_FAIL 0x65
 
-struct msg
+volatile struct msg
 {
     uint8_t cmd;
     uint8_t data[6];
@@ -17,6 +17,7 @@ void handleCommand()
     if (activeMessage.cmd == CMD_TYPE_HANDSHAKE)
     {
         putx(RESULT_OK);
+        return;
     }
     if (activeMessage.cmd == CMD_TYPE_SET_LED_COLORS)
     {
@@ -27,26 +28,28 @@ void handleCommand()
         led[1].g = activeMessage.data[4];
         led[1].b = activeMessage.data[5];
         putx(RESULT_OK);
+        return;
     }
+    putx(RESULT_FAIL);
+    // putx(activeMessage.cmd);
+    // for (uint8_t i = 0; i < 6; i++)
+    // {
+    //     putx(activeMessage.data[i]);
+    // }
 }
 void setupComm()
 {
 }
 void loopComm()
 {
-    static uint8_t datapos = 0;
-    uint8_t c = purx();
-    if (c >= CMD_TYPE_HANDSHAKE && c <= CMD_TYPE_SET_LED_COLORS)
-    {
-        activeMessage.cmd = c;
-        datapos = 0;
-        return;
+    uint8_t buffer[7] = {0};
+    for (uint8_t i = 0; i < 7; i++) {
+        buffer[i] = purx();
     }
-    activeMessage.data[datapos] = c;
-    datapos++;
-    if (datapos == 6)
+    activeMessage.cmd = buffer[0];
+    for (uint8_t i = 0; i < 6; i++)
     {
-        handleCommand();
-        datapos = 0;
+        activeMessage.data[i] = buffer[i+1];
     }
+    handleCommand();
 }

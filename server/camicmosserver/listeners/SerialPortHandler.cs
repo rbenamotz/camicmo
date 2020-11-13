@@ -18,18 +18,34 @@ namespace camicmosserver.listeners
         private byte[] _micOffColor = { 0, 10, 0 };
         private byte[] _camOnColor = { 255, 0, 0 };
         private byte[] _camOffColor = { 0, 10, 0 };
-
+        private int serialSpeed = 9600;
         public SerialPortHandler(dynamic config)
         {
             ApplyColor(_micOnColor, config["micOnColor"]);
             ApplyColor(_micOffColor, config["micOffColor"]);
             ApplyColor(_camOnColor, config["camOnColor"]);
             ApplyColor(_camOffColor, config["camOffColor"]);
+            if (config.speed != null) { serialSpeed = (int)config.speed; }
         }
 
         internal void OnStateChanged(State state)
         {
-            _pendingState = state;
+            if (port == null || !port.IsOpen)
+            {
+                _pendingState = state;
+                return;
+            }
+            if (state.IsSomethingOn)
+            {
+                for (int i=0; i<3; i++)
+                {
+                    SendToDevice(state);
+                    Thread.Sleep(250);
+                    SendToDevice(State.Empty);
+                    Thread.Sleep(250);
+                }
+            }
+            SendToDevice(state);
         }
 
         private void ApplyColor(byte[] b, dynamic dynamic)
@@ -44,67 +60,40 @@ namespace camicmosserver.listeners
             }
         }
 
-
-        public void Run()
+        public void FindSerialPort(int attempt = 1)
         {
-            var lastConnctionAttempt = DateTime.MinValue;
-            while (true)
-            {
-                if (port != null && port.IsOpen)
-                {
-                    SendPendingState();
-                    Thread.Sleep(100);
-                    continue;
-                }
-                var ts = DateTime.Now - lastConnctionAttempt;
-                if (ts.TotalSeconds<=2)
-                {
-                    continue;
-                }
-                Console.WriteLine("Need to connect to serial");
-                foreach (var portName in SerialPort.GetPortNames())
-                {
-                    Console.WriteLine(portName);
-                    if (CheckPort(portName))
-                    {
-                        if (_pendingState == null) { SendToDevice(_lastSentState); };
-                        break;
-                    }
-                }
-                lastConnctionAttempt = DateTime.Now;
-            }
-
-        }
-        private void SendPendingState()
-        {
-            if (_pendingState == null)
+            if (port!=null && port.IsOpen)
             {
                 return;
             }
-            lock (_pendingState)
+            Console.WriteLine("Looking for device, attempt " + attempt);
+            foreach (var portName in SerialPort.GetPortNames())
             {
-                if (_pendingState.IsSomethingOn)
+                if (CheckPort(portName))
                 {
-                    for (int i=0; i<3; i++)
-                    {
-                        Thread.Sleep(250);
-                        SendToDevice(State.Empty);
-                        Thread.Sleep(250);
-                        SendToDevice(_pendingState);
-                    }
-
+                    SendToDevice(_pendingState == null?_lastSentState :   _pendingState);
+                    Console.WriteLine("Using port " + portName);
+                    return;
                 }
-                SendToDevice(_pendingState);
-                _pendingState = null;
             }
+            if (attempt<5)
+            {
+                Thread.Sleep(100);
+                FindSerialPort(attempt + 1);
+            }
+
         }
+
 
         private bool CheckPort(string portName)
         {
+            Console.WriteLine("Chekcing port " + portName);
             try
             {
-                port = new SerialPort(portName, 115200, Parity.None, 8, StopBits.One);
-                port.ReadTimeout = 100;
+                port = new SerialPort(portName, serialSpeed, Parity.None, 8, StopBits.One)
+                {
+                    ReadTimeout = 500
+                };
                 port.Open();
             }
             catch (Exception ex)
@@ -121,43 +110,74 @@ namespace camicmosserver.listeners
             b[0] = CMD_TYPE_HANDSHAKE;
             try
             {
-                Console.Write(b[0]);
+
+                Console.WriteLine("Sending " + b[0]);
                 port.Write(b, 0, 7);
+                Console.WriteLine("Reading...");
                 port.Read(b, 0, 1);
-                Console.Write("-->");
-                Console.WriteLine(b[0]);
+                Console.WriteLine("Result: " + b[0]);
                 if (b[0] == RESULT_OK)
                 {
+                    Console.WriteLine("Result ok");
                     return true;
                 }
+            }
+            catch (UnauthorizedAccessException)
+            {
+
             }
             catch (InvalidOperationException)
             {
             }
-            catch (System.TimeoutException)
+            catch (TimeoutException)
             {
+                Console.WriteLine("Time out");
             }
-            port.Close();
+            if (port.IsOpen) { port.Close(); }            
             port = null;
             return false;
         }
 
-        private void SendToDevice(State state)
+        private void SendToDevice(State state, int attempt = 1)
         {
-            if (state == null)
+            if (state ==null)
             {
                 return;
             }
-            Console.Write(CMD_TYPE_SET_LED_COLORS);
-
-            byte[] buffer = new byte[] { CMD_TYPE_SET_LED_COLORS };
-            port.Write(buffer, 0, 1);
-            port.Write(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, 3);
-            port.Write(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, 3);
-            port.Read(buffer, 0, 1);
-            Console.Write("-->");
-            Console.WriteLine(buffer[0]);
-            _lastSentState = state;
+            try
+            {
+                Console.WriteLine("Sending colors to device, attempt " + attempt);
+                byte[] buffer = new byte[7];
+                buffer[0] = CMD_TYPE_SET_LED_COLORS;
+                Array.Copy(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, buffer, 1, 3);
+                Array.Copy(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, buffer, 4, 3);
+                port.Write(buffer, 0, 7);
+                Console.Write("-->");
+                for (int g=0; g<7; g++)
+                {
+                    if (g>0) { Console.Write(","); }
+                    Console.Write(buffer[g]);
+                }
+                Console.Write("<--");
+                port.Read(buffer, 0, 1);
+                Console.Write(buffer[0]);
+                Console.WriteLine("");
+                if (buffer[0] != RESULT_OK && attempt<5)
+                {
+                    Console.WriteLine("Recieved " + buffer[0] + " from device. Retrying");
+                    SendToDevice(state, attempt + 1);
+                }
+                _lastSentState = state;
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                if (attempt < 5)
+                {
+                    Console.WriteLine("Trying again");
+                    SendToDevice(state, attempt + 1);
+                }
+            }
         }
     }
 }

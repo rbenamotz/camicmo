@@ -4,7 +4,6 @@
 #include <avr/interrupt.h>
 #include "common.h"
 
-struct cRGB led[NUMPIXELS];
 
 void apply()
 {
@@ -13,8 +12,11 @@ void apply()
 
 void setupPixels()
 {
-    led[0].b = 255;
-    led[1].b = 255;
+    led[0].r = 50;
+    led[0].b = 50;
+    led[1].r = 50;
+    led[1].b = 50;
+    apply();
 }
 void loopPixels()
 {

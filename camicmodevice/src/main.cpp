@@ -3,6 +3,8 @@
 #include "pixels.h"
 #include "comm.h"
 #include "common.h"
+struct cRGB led[NUMPIXELS];
+
 
 void loop()
 {
@@ -10,7 +12,7 @@ void loop()
   loopPixels();
 }
 
-__attribute((weak)) int main(void)
+int main(void)
 {
   setupComm();
   setupPixels();
