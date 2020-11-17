@@ -34,7 +34,7 @@ namespace camicmosserver.listeners.repo
         private static string ConfigFileName()
         {
             string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var configFile = assemblyPath + "\\" + "listeners.json0";
+            var configFile = assemblyPath + "\\" + "listeners.json";
             return configFile;
 
         }

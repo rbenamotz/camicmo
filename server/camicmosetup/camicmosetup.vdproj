@@ -5035,15 +5035,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:camicmo"
-        "ProductCode" = "8:{A4941361-D2A6-43F8-A197-CA70ED861993}"
-        "PackageCode" = "8:{77FE01A5-DC3F-4640-89B7-420B4A1C9E6B}"
+        "ProductCode" = "8:{72CA0DF1-A923-4D71-A7DA-6A50875EF47B}"
+        "PackageCode" = "8:{35425BC7-CEA1-4A40-A6A9-0285076A4996}"
         "UpgradeCode" = "8:{5A9137F9-C445-4D08-B3A2-C1CF613003D6}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:0.3.1"
         "Manufacturer" = "8:benamotz"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/rbenamotz/camicmo"
@@ -5599,7 +5599,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C47E783A64BE4F848017C4B677DF606B"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:..\\camicmosserver\\obj\\Release\\camicmosserver.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A65812AB13E04727A68004E836D8A986"
