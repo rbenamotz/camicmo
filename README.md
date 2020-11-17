@@ -1,7 +1,7 @@
 # camicmo
 Camera and Microphone Monitor
 
-Camicmo will run in the background (taking almost zero CPI and memory) and will monitor when applications activly use Microphone or Camera.
+Camicmo will run in the background (taking almost zero CPU and memory) and will monitor when applications activly use Microphone or Camera.
 
 Once that happens, camicmo will send notification to physical device (soon....) and / or MQTT server.
 
