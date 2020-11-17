@@ -1,21 +1,42 @@
 ﻿using camicmosserver.listeners;
+using camicmosserver.listeners.repo;
 using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace camicmosserver
+namespace camicmosserver.listeners
 {
-    class ListenersFactory
+    public class ListenersFactory
     {
-        private List<IListener> _listeners;
+        public const string LISTENER_TYPE_SERIAL = "serial";
 
-        public ListenersFactory()
+        private readonly IListenersSource _source;
+        private readonly List<IListener> _listeners;
+
+
+        public ListenersFactory(IListenersSource source = null)
         {
+            if (source!=null)
+            {
+                _source = source;
+            }
+            else
+            {
+                if (ListenerConfigReader.IsConfigFileExists())
+                {
+                    _source = new ListenerConfigReader();
+                }
+                else
+                {
+                    _source=  new DefaultListeners();
+                }
+            }
             _listeners = new List<IListener>();
             LoadListeners();
         }
+
         public IEnumerable<IListener> Listeners => _listeners;
 
         private IListener LoadInstanceByName(string name)
@@ -26,7 +47,7 @@ namespace camicmosserver
             {
                 return new MqttBroker();
             }
-            if (name=="serial" || name=="device" || name=="camicmo")
+            if (name== LISTENER_TYPE_SERIAL || name=="device" || name=="camicmo")
             {
                 return new CamicmoDevice();
             }
@@ -35,34 +56,24 @@ namespace camicmosserver
 
         private void LoadListeners()
         {
-            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var configFile = assemblyPath + "\\" + "listeners.json";
-            if (!File.Exists(configFile))
+            foreach (var li in _source.Listeners)
             {
-                return;
-            }
-            using (StreamReader r = new StreamReader(configFile))
-            {
-                string s = r.ReadToEnd();
-                var all = JArray.Parse(s);
-                foreach (dynamic a in all)
+                try
                 {
-                    try
+                    var l = LoadInstanceByName(li.Name);
+                    if (l != null)
                     {
-                        var l = LoadInstanceByName((string) a.type);
-                        if (l!=null)
-                        {
-                            l.Init(a.config);
-                            _listeners.Add(l);
-                        }
-                    }
-                    catch (RuntimeBinderException)
-                    {
-                        throw;
-                        //TODO: Log
+                        l.Init(li.Config);
+                        _listeners.Add(l);
                     }
                 }
+                catch (RuntimeBinderException)
+                {
+                    throw;
+                    //TODO: Log
+                }
             }
+
         }
     }
 }

@@ -76,11 +76,12 @@ namespace camicmosserver
 
         private bool CheckKey(RegistryKey k)
         {
-            var lastStop = k.GetValue("LastUsedTimeStop");
-            if (lastStop != null)
+            var lastStart = k.GetValue("LastUsedTimeStart") as long?;
+            var lastStop = k.GetValue("LastUsedTimeStop") as long?;
+            if (lastStop != null && lastStart!=null)
             {
-                bool b = ((long)lastStop == 0);
-                if (b)
+                var ts = lastStart - lastStop;
+                if (ts>0)
                 {
                     return true;
                 }

@@ -5,3 +5,4 @@ bin
 .vs
 Debug
 Release
+/server/packages

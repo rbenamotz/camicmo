@@ -21,6 +21,10 @@ namespace camicmosserver.listeners
         private int serialSpeed = 9600;
         public SerialPortHandler(dynamic config)
         {
+            if (config==null)
+            {
+                return;
+            }
             ApplyColor(_micOnColor, config["micOnColor"]);
             ApplyColor(_micOffColor, config["micOffColor"]);
             ApplyColor(_camOnColor, config["camOnColor"]);
@@ -149,8 +153,8 @@ namespace camicmosserver.listeners
                 Console.WriteLine("Sending colors to device, attempt " + attempt);
                 byte[] buffer = new byte[7];
                 buffer[0] = CMD_TYPE_SET_LED_COLORS;
-                Array.Copy(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, buffer, 1, 3);
-                Array.Copy(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, buffer, 4, 3);
+                Array.Copy(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, buffer, 1, 3);
+                Array.Copy(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, buffer, 4, 3);
                 port.Write(buffer, 0, 7);
                 Console.Write("-->");
                 for (int g=0; g<7; g++)

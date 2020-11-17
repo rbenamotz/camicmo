@@ -92,6 +92,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -102,13 +103,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="listeners\CamicmoDevice.cs" />
+    <Compile Include="listeners\repo\DefaultListeners.cs" />
+    <Compile Include="listeners\repo\IListenersSource.cs" />
+    <Compile Include="listeners\repo\ListenerConfigReader.cs" />
     <Compile Include="listeners\ListenersFactory.cs" />
-    <Compile Include="FirstTimeInstall.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FirstTimeInstall.Designer.cs">
-      <DependentUpon>FirstTimeInstall.cs</DependentUpon>
-    </Compile>
     <Compile Include="listeners\IListener.cs" />
     <Compile Include="listeners\mqtt.cs" />
     <Compile Include="listeners\SerialPortHandler.cs" />
@@ -119,9 +117,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="listeners.json">
+    <Content Include="readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
