@@ -53,7 +53,7 @@ namespace camicmosserver.listeners
                 payload += p;
             }
             var message = new MqttApplicationMessageBuilder()
-                .WithTopic("camicmo-" + capbility + "-progs")
+                .WithTopic(_topicPrefix +  "-" + capbility + "-progs")
                 .WithPayload(payload)
                 .WithExactlyOnceQoS()
                 .WithRetainFlag()
