@@ -14,10 +14,10 @@ namespace camicmosserver.listeners
         private const byte RESULT_OK = 0x64;
 
 
-        private byte[] _micOnColor = { 255, 0, 0 };
-        private byte[] _micOffColor = { 0, 10, 0 };
-        private byte[] _camOnColor = { 255, 0, 0 };
-        private byte[] _camOffColor = { 0, 10, 0 };
+        private byte[] _micOnColor = {0 , 0, 255 };
+        private byte[] _micOffColor = { 0, 15, 0 };
+        private byte[] _camOnColor = { 0, 0, 255 };
+        private byte[] _camOffColor = { 0, 15, 0 };
         private int serialSpeed = 9600;
         public SerialPortHandler(dynamic config)
         {
@@ -68,6 +68,7 @@ namespace camicmosserver.listeners
         {
             if (port!=null && port.IsOpen)
             {
+                Console.WriteLine("No need to check - port is already open");
                 return;
             }
             Console.WriteLine("Looking for device, attempt " + attempt);
@@ -153,8 +154,8 @@ namespace camicmosserver.listeners
                 Console.WriteLine("Sending colors to device, attempt " + attempt);
                 byte[] buffer = new byte[7];
                 buffer[0] = CMD_TYPE_SET_LED_COLORS;
-                Array.Copy(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, buffer, 1, 3);
-                Array.Copy(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, buffer, 4, 3);
+                Array.Copy(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, buffer, 4, 3);
+                Array.Copy(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, buffer, 1, 3);
                 port.Write(buffer, 0, 7);
                 Console.Write("-->");
                 for (int g=0; g<7; g++)

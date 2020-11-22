@@ -12,10 +12,10 @@ void apply()
 
 void setupPixels()
 {
-    led[0].r = 50;
-    led[0].b = 50;
-    led[1].r = 50;
-    led[1].b = 50;
+    // led[0].r = 50;
+    led[0].b = 30;
+    // led[1].r = 50;
+    led[1].b = 30;
     apply();
 }
 void loopPixels()

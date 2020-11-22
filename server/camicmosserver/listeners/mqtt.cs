@@ -12,6 +12,7 @@ namespace camicmosserver.listeners
     {
         private readonly IMqttClient _client;
         private State _pendingState = null;
+        private string _topicPrefix = "camicmo";
 
         public  MqttBroker() 
         {
@@ -35,7 +36,7 @@ namespace camicmosserver.listeners
         private async void Publish(string capability, bool val)
         {
             var message = new MqttApplicationMessageBuilder()
-                .WithTopic("camicmo-" + capability + "-state")
+                .WithTopic(_topicPrefix + "-" + capability + "-state")
                 .WithPayload(val ? "ON" : "OFF")
                 .WithExactlyOnceQoS()
                 .WithRetainFlag()
@@ -87,6 +88,10 @@ namespace camicmosserver.listeners
                 ob.WithCredentials((string)config.credentials.username, (string)config.credentials.password);
             }
             var options = ob.Build();
+            if (config["topicPrefix"] != null)
+            {
+                _topicPrefix = ((string)config["topicPrefix"]);
+            }
             _client.UseConnectedHandler( e =>
             {
                 Console.WriteLine("Connected to MQTT");

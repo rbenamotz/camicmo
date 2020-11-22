@@ -22,6 +22,7 @@ Omnce the file is created need to restart the server.
       "broker": "",
       "port": 1883,
       "clientId": "camicmo",
+      "topicPrefix": "camicmo",
       "credentials": {
         "username": "",
         "password": ""
