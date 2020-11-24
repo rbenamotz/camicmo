@@ -49,6 +49,7 @@ namespace camicmosserver
                     Thread.Sleep(500);
                     continue;
                 }
+                Console.WriteLine("State changed: " + _state.ToString());
                 foreach (IListener l in _listeners)
                 {
                     l.OnStateChanged(_state);

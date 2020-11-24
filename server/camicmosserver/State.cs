@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace camicmosserver
 {
@@ -46,6 +47,22 @@ namespace camicmosserver
                 return new String[] { };
             }
             return _register[capability];
+        }
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            foreach (var k in _register.Keys)
+            {
+                if (sb.Length>0)
+                {
+                    sb.Append(",");
+                }
+                sb.Append(k);
+            }
+            sb.Insert(0, "Apps=[");
+            sb.Append("] dirty=");
+            sb.Append(IsDirty);
+            return sb.ToString();
         }
     }
 }

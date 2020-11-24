@@ -3,7 +3,9 @@
 #include "common.h"
 #define CMD_TYPE_HANDSHAKE 200
 #define CMD_TYPE_SET_LED_COLORS 201
-#define RESULT_OK 0x64
+#define RESULT_OK_V1 0x64
+#define RESULT_OK_V2 0x66
+#define RESULT_OK RESULT_OK_V2
 #define RESULT_FAIL 0x65
 
 volatile struct msg
@@ -42,14 +44,35 @@ void setupComm()
 }
 void loopComm()
 {
-    uint8_t buffer[7] = {0};
-    for (uint8_t i = 0; i < 7; i++) {
-        buffer[i] = purx();
+    static uint8_t buffer[7] = {0};
+    static uint8_t position = 0;
+    while (position<7) {
+        uint8_t c = purx();
+        if (c==CMD_TYPE_HANDSHAKE || c==CMD_TYPE_SET_LED_COLORS) {
+            position = 0;
+        }
+        buffer[position] = c;
+        position++;
     }
+    position = 0;
     activeMessage.cmd = buffer[0];
     for (uint8_t i = 0; i < 6; i++)
     {
-        activeMessage.data[i] = buffer[i+1];
+        activeMessage.data[i] = buffer[i+1] * 2 + buffer[i+1] /2;
     }
     handleCommand();
 }
+
+// void loopComm()
+// {
+//     uint8_t buffer[7] = {0};
+//     for (uint8_t i = 0; i < 7; i++) {
+//         buffer[i] = purx();
+//     }
+//     activeMessage.cmd = buffer[0];
+//     for (uint8_t i = 0; i < 6; i++)
+//     {
+//         activeMessage.data[i] = buffer[i+1];
+//     }
+//     handleCommand();
+// }

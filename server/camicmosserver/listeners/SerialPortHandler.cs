@@ -11,24 +11,25 @@ namespace camicmosserver.listeners
         private State _lastSentState = null;
         private const byte CMD_TYPE_HANDSHAKE = 0xC8;
         private const byte CMD_TYPE_SET_LED_COLORS = 0xC9;
-        private const byte RESULT_OK = 0x64;
+        private const byte RESULT_OK_V1 = 0x64;
+        private const byte RESULT_OK_V2 = 0x66;
 
-
-        private byte[] _micOnColor = {0 , 0, 255 };
-        private byte[] _micOffColor = { 0, 15, 0 };
-        private byte[] _camOnColor = { 0, 0, 255 };
-        private byte[] _camOffColor = { 0, 15, 0 };
+        private byte[] _micOnColor = {0 , 0, 100 };
+        private byte[] _micOffColor = { 0, 7, 0 };
+        private byte[] _camOnColor = { 0, 0, 100 };
+        private byte[] _camOffColor = { 0, 7, 0 };
         private int serialSpeed = 9600;
+        private int _deviceVersion = 0;
         public SerialPortHandler(dynamic config)
         {
             if (config==null)
             {
                 return;
             }
-            ApplyColor(_micOnColor, config["micOnColor"]);
-            ApplyColor(_micOffColor, config["micOffColor"]);
-            ApplyColor(_camOnColor, config["camOnColor"]);
-            ApplyColor(_camOffColor, config["camOffColor"]);
+            ApplyColorFromConfig(_micOnColor, config["micOnColor"]);
+            ApplyColorFromConfig(_micOffColor, config["micOffColor"]);
+            ApplyColorFromConfig(_camOnColor, config["camOnColor"]);
+            ApplyColorFromConfig(_camOffColor, config["camOffColor"]);
             if (config.speed != null) { serialSpeed = (int)config.speed; }
         }
 
@@ -52,7 +53,7 @@ namespace camicmosserver.listeners
             SendToDevice(state);
         }
 
-        private void ApplyColor(byte[] b, dynamic dynamic)
+        private void ApplyColorFromConfig(byte[] b, dynamic dynamic)
         {
             if (dynamic == null)
             {
@@ -60,7 +61,9 @@ namespace camicmosserver.listeners
             }
             for (int i = 0; i < 3; i++)
             {
-                b[i] = (byte)dynamic[i];
+                byte p = dynamic[i];
+                if (p > 100) { p = 100; };
+                b[i] = p;
             }
         }
 
@@ -121,9 +124,16 @@ namespace camicmosserver.listeners
                 Console.WriteLine("Reading...");
                 port.Read(b, 0, 1);
                 Console.WriteLine("Result: " + b[0]);
-                if (b[0] == RESULT_OK)
+                if (b[0] == RESULT_OK_V1)
                 {
-                    Console.WriteLine("Result ok");
+                    _deviceVersion = 1;
+                    Console.WriteLine("Result ok. V1");
+                    return true;
+                }
+                if (b[0] == RESULT_OK_V2)
+                {
+                    _deviceVersion = 2;
+                    Console.WriteLine("Result ok. V2");
                     return true;
                 }
             }
@@ -142,7 +152,16 @@ namespace camicmosserver.listeners
             port = null;
             return false;
         }
-
+        private void CopyColorsToBuffer(byte[] src, byte[] dest, int start, int length)
+        {
+            for (int i=0; i<length; i++)
+            {
+                byte p = src[i];
+                if (_deviceVersion==1) { p = (byte) (p * 2.5); };
+                if (_deviceVersion>=2 && p>100) { p = 100; };
+                dest[start + i] = p;
+            }
+        }
         private void SendToDevice(State state, int attempt = 1)
         {
             if (state ==null)
@@ -154,8 +173,10 @@ namespace camicmosserver.listeners
                 Console.WriteLine("Sending colors to device, attempt " + attempt);
                 byte[] buffer = new byte[7];
                 buffer[0] = CMD_TYPE_SET_LED_COLORS;
-                Array.Copy(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, buffer, 4, 3);
-                Array.Copy(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, buffer, 1, 3);
+                CopyColorsToBuffer(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, buffer,4, 3);
+                CopyColorsToBuffer(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, buffer, 1, 3);
+                //Array.Copy(state.IsCapbilityOn(State.MIC) ? _micOnColor : _micOffColor, 0, buffer, 4, 3);
+                //Array.Copy(state.IsCapbilityOn(State.WEBCAM) ? _camOnColor : _camOffColor, 0, buffer, 1, 3);
                 port.Write(buffer, 0, 7);
                 Console.Write("-->");
                 for (int g=0; g<7; g++)
@@ -167,7 +188,9 @@ namespace camicmosserver.listeners
                 port.Read(buffer, 0, 1);
                 Console.Write(buffer[0]);
                 Console.WriteLine("");
-                if (buffer[0] != RESULT_OK && attempt<5)
+                byte r = buffer[0];
+                bool isResultOk = (r == RESULT_OK_V1 || r == RESULT_OK_V2);
+                if (!isResultOk && attempt<5)
                 {
                     Console.WriteLine("Recieved " + buffer[0] + " from device. Retrying");
                     SendToDevice(state, attempt + 1);

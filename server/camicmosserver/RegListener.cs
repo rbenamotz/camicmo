@@ -42,11 +42,26 @@ namespace camicmosserver
             return (output.Count>0);
 
         }
-        public ICollection<string> WhatIsUsing(String capability)
+        public ICollection<string> WhatIsUsing(string capability)
         {
+            var base1  = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            var base2 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
             var output = new List<String>();
-            var key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-            key = key.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\" + capability, false); //\\\\\\microphone", false);
+            output.AddRange(WhatIsUsing(capability, base1));
+            output.AddRange(WhatIsUsing(capability, base2));
+            return output;
+        }
+
+        private IEnumerable<string> WhatIsUsing(string capability, RegistryKey baseKey)
+        {
+            const string path = @"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\";
+            var output = new List<String>();
+            //var key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            var key = baseKey.OpenSubKey (path + capability, false); //\\\\\\microphone", false);
+            if (key==null)
+            {
+                return output;
+            }
             foreach (string s in key.GetSubKeyNames())
             {
                 RegistryKey k1 = key.OpenSubKey(s);
