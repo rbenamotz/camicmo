@@ -15,3 +15,7 @@ This allows for easy integration with home automation systems.
 
 ## Privacy
 Everything is local. The system does not collect any personal information, does not store usage logs, and does not "call home".
+
+
+## Thanks
+Based on idea (and butiful execution) by Tovi Levy. Check his project at https://youtu.be/FTn1oHqCWCM
